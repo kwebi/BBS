@@ -87,10 +87,15 @@ public class QuestionService {
 
     public void createOrUpdate(Question question) {
         if(question.getId()==null){
+            //创建
             question.setGmtCreate(System.currentTimeMillis());
             question.setGmtModified(question.getGmtCreate());
+            question.setViewCount(0);
+            question.setLikeCount(0);
+            question.setCommentCount(0);
             questionMapper.create(question);
         }else{
+            //更新
             question.setGmtModified(System.currentTimeMillis());
             int update = questionMapper.update(question);
             if(update==0){
@@ -100,6 +105,6 @@ public class QuestionService {
     }
 
     public void incView(Integer id) {
-        questionMapper.incView(id);
+        questionMapper.incViewCount(id);
     }
 }

@@ -2,6 +2,8 @@ package cn.kwebi.community.service;
 
 import cn.kwebi.community.dto.PaginationDTO;
 import cn.kwebi.community.dto.QuestionDTO;
+import cn.kwebi.community.exception.CustomizeErrorCode;
+import cn.kwebi.community.exception.CustomizeException;
 import cn.kwebi.community.mapper.QuestionMapper;
 import cn.kwebi.community.mapper.UserMapper;
 import cn.kwebi.community.model.Question;
@@ -73,6 +75,9 @@ public class QuestionService {
 
     public QuestionDTO getById(Integer id) {
         Question question = questionMapper.getById(id);
+        if(question==null){
+            throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+        }
         QuestionDTO questionDTO = new QuestionDTO();
         BeanUtils.copyProperties(question,questionDTO);
         User user = userMapper.findById(question.getCreator());
@@ -87,7 +92,14 @@ public class QuestionService {
             questionMapper.create(question);
         }else{
             question.setGmtModified(System.currentTimeMillis());
-            questionMapper.update(question);
+            int update = questionMapper.update(question);
+            if(update==0){
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            }
         }
+    }
+
+    public void incView(Integer id) {
+        questionMapper.incView(id);
     }
 }

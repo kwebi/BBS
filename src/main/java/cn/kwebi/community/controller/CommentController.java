@@ -1,9 +1,8 @@
 package cn.kwebi.community.controller;
 
-import cn.kwebi.community.dto.CommentDTO;
+import cn.kwebi.community.dto.CommentCreateDTO;
 import cn.kwebi.community.dto.ResultDTO;
 import cn.kwebi.community.exception.CustomizeErrorCode;
-import cn.kwebi.community.mapper.CommentMapper;
 import cn.kwebi.community.model.Comment;
 import cn.kwebi.community.model.User;
 import cn.kwebi.community.service.CommentService;
@@ -24,17 +23,17 @@ public class CommentController {
 
     @ResponseBody
     @RequestMapping(value = "/comment",method = RequestMethod.POST)
-    public Object post(@RequestBody CommentDTO commentDTO,
+    public Object post(@RequestBody CommentCreateDTO commentCreateDTO,
                        HttpServletRequest request){
         User user =(User) request.getSession().getAttribute("user");
         if(user==null){
             return ResultDTO.errorOf(CustomizeErrorCode.NO_LOGIN);
         }
         Comment comment = new Comment();
-        comment.setParentId(commentDTO.getParentId());
-        comment.setContent(commentDTO.getContent());
+        comment.setParentId(commentCreateDTO.getParentId());
+        comment.setContent(commentCreateDTO.getContent());
         comment.setCommentator(user.getId());
-        comment.setType(commentDTO.getType());
+        comment.setType(commentCreateDTO.getType());
         comment.setGmtCreate(System.currentTimeMillis());
         comment.setGmtModified(comment.getGmtCreate());
         comment.setCommentator(1);

@@ -1,15 +1,25 @@
 package cn.kwebi.community.service;
 
+import cn.kwebi.community.dto.CommentDTO;
 import cn.kwebi.community.enums.CommentTypeEnum;
 import cn.kwebi.community.exception.CustomizeErrorCode;
 import cn.kwebi.community.exception.CustomizeException;
 import cn.kwebi.community.mapper.CommentMapper;
 import cn.kwebi.community.mapper.QuestionMapper;
+import cn.kwebi.community.mapper.UserMapper;
 import cn.kwebi.community.model.Comment;
 import cn.kwebi.community.model.Question;
+import cn.kwebi.community.model.User;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentService {
@@ -19,6 +29,9 @@ public class CommentService {
 
     @Autowired
     private QuestionMapper questionMapper;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Transactional
     public void insert(Comment comment) {
@@ -45,4 +58,28 @@ public class CommentService {
             questionMapper.incCommentCount(question.getId());
         }
     }
+
+    public List<CommentDTO> listByQestionId(Integer id) {
+        List<Comment> comments = commentMapper.getByQuestionId(id, CommentTypeEnum.QUESTION.getType());
+        if (comments == null || comments.size() == 0) {
+            return new ArrayList<>();
+        }
+        //获取去重的评论人
+        Set<Integer> commentators = comments.stream().map(Comment::getCommentator).collect(Collectors.toSet());
+        List<User> users = new ArrayList<>();
+        for (Integer userId : commentators) {
+            users.add(userMapper.findById(userId));
+        }
+        //加一个map
+        Map<Integer, User> userMap = users.stream().collect(Collectors.toMap(User::getId, user -> user));
+        //赋值给commentDTO
+        List<CommentDTO> commentDTOS = comments.stream().map(comment -> {
+            CommentDTO commentDTO = new CommentDTO();
+            BeanUtils.copyProperties(comment,commentDTO);
+            commentDTO.setUser(userMap.get(comment.getCommentator()));
+            return commentDTO;
+        }).collect(Collectors.toList());
+        return commentDTOS;
+    }
+
 }

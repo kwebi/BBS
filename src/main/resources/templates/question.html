@@ -15,7 +15,7 @@
 <div class="container-fluid main profile">
     <div class="row">
         <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
-
+            <!--正文-->
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <h3>
                     <span th:text="${question.title}"></span>
@@ -32,11 +32,38 @@
                 <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <a th:href="@{'/publish/'+${question.id}}"
                    th:if="${session.user != null && session.user.id == question.creator}">
-                    <span class="glyphicon glyphicon-edit community-menu"></span> 编辑
+                    <div class="community-menu">
+                        <span class="glyphicon glyphicon-edit "></span> 编辑
+                    </div>
                 </a>
             </div>
-            <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <!--回复-->
+            <h3><span th:text="${question.commentCount}"></span> 个回复</h3>
+            <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12 comment-sp">
+            <div class="media col-lg-12 col-md-12 col-sm-12 col-xs-12 comments" th:each="comment: ${comments}">
+                <div class="media">
+                    <div class="media-left">
+                        <a href="#">
+                            <img th:src="${comment.user.avatarUrl}" alt="" class="img-rounded media-object">
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <h5 class="media-heading">
+                            <span th:text="${comment.user.name}"></span>
+                        </h5>
+                        <div th:text="${comment.content}">内容</div>
+                        <div class="menu">
+                            <span class="glyphicon glyphicon-thumbs-up icon"></span>
+                            <span class="glyphicon glyphicon-comment icon"></span>
+                            <span class="pull-right"
+                                  th:text="${#dates.format(comment.gmtCreate,'yyyy-MM-dd HH:mm')}"></span>
+                        </div>
+                    </div>
+                </div>
 
+            </div>
+            <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <!--回复输入框-->
             <div class="media col-lg-12 col-md-12 col-sm-12 col-xs-12" id="comment_section">
                 <div class="media-left">
                     <a href="#">

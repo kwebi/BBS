@@ -15,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,13 +51,15 @@ public class CommentService {
             if (question == null) {
                 throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             }
+
             commentMapper.insert(comment);
             questionMapper.incCommentCount(question.getId());
         }
     }
 
-    public List<CommentDTO> listByQestionId(Integer id) {
-        List<Comment> comments = commentMapper.getByQuestionId(id, CommentTypeEnum.QUESTION.getType());
+    public List<CommentDTO> listByParentId(Integer id, CommentTypeEnum commentTypeEnum) {
+        List<Comment> comments = commentMapper.getByParentId(id, commentTypeEnum.getType());
+
         if (comments == null || comments.size() == 0) {
             return new ArrayList<>();
         }
@@ -75,10 +74,11 @@ public class CommentService {
         //赋值给commentDTO
         List<CommentDTO> commentDTOS = comments.stream().map(comment -> {
             CommentDTO commentDTO = new CommentDTO();
-            BeanUtils.copyProperties(comment,commentDTO);
+            BeanUtils.copyProperties(comment, commentDTO);
             commentDTO.setUser(userMap.get(comment.getCommentator()));
             return commentDTO;
         }).collect(Collectors.toList());
+        Collections.reverse(commentDTOS);
         return commentDTOS;
     }
 

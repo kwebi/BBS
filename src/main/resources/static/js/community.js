@@ -1,20 +1,31 @@
+
+/*
+提交回复
+ */
 function post() {
     var questionId = $("#question_id").val();
     var content = $("#comment_content").val();
-    console.log(content);
-    console.log(questionId);
+    comment2target(questionId,1,content);
+}
+
+function comment2target(targetId,type,content) {
+    if(!content){
+        alert("不能回复空内容");
+        return;
+    }
     $.ajax({
         type: "POST",
         url: "/comment",
         contentType: "application/json",
         data: JSON.stringify({
-            "parentId": questionId,
+            "parentId": targetId,
             "content": content,
-            "type": 1
+            "type": type
         }),
         success: function (response) {
             if(response.code === 200){
                 $("#comment_section").hide();
+                window.location.reload();
             }else{
                 if(response.code === 2003){
                     var isAccepted = confirm(response.message);
@@ -29,5 +40,29 @@ function post() {
         },
         dataType: "json"
     });
+}
 
+function comment(e) {
+    var commentId = e.getAttribute("data-id");
+    var content = $("#input-"+commentId).val();
+    comment2target(commentId,2,content);
+}
+
+/*
+展开二级评论
+ */
+
+function collapseComments(e) {
+    var id = e.getAttribute("data-id");
+    var comments = $("#comment-" + id);
+    var collapse = e.getAttribute("data-collapse");
+    if (collapse) {
+        comments.removeClass("in");
+        e.removeAttribute("data-collapse");
+        e.classList.remove("active");
+    } else {
+        comments.addClass("in");//展开二级评论
+        e.setAttribute("data-collapse", "in");//标记状态
+        e.classList.add("active");
+    }
 }

@@ -2,7 +2,6 @@ package cn.kwebi.community.controller;
 
 import cn.kwebi.community.dto.AccessTockenDTO;
 import cn.kwebi.community.dto.GithubUser;
-import cn.kwebi.community.mapper.UserMapper;
 import cn.kwebi.community.model.User;
 import cn.kwebi.community.provider.GithubProvider;
 import cn.kwebi.community.service.UserService;
@@ -44,13 +43,18 @@ public class AuthorizeController {
         accessTockenDTO.setClient_id(clientId);
         accessTockenDTO.setClient_secret(clientSecret);
         String accessTocken = githubProvider.getAccessTocken(accessTockenDTO);
+        System.out.println(accessTocken);
         GithubUser githubUser = githubProvider.getUser(accessTocken);
         if(githubUser!=null && githubUser.getId()!=null){
             User user = new User();
             String token = UUID.randomUUID().toString();
             user.setToken(token);
             user.setAccountId(String.valueOf(githubUser.getId()));
-            user.setName(githubUser.getName());
+            if(githubUser.getName()==null){
+                user.setName(githubUser.getLogin());
+            }else {
+                user.setName(githubUser.getName());
+            }
             user.setAvatarUrl(githubUser.getAvatarUrl());
 
             userService.createOrUpdate(user);

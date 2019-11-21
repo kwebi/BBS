@@ -1,7 +1,6 @@
 package cn.kwebi.community.controller;
 
 import cn.kwebi.community.dto.QuestionDTO;
-import cn.kwebi.community.mapper.QuestionMapper;
 import cn.kwebi.community.model.Question;
 import cn.kwebi.community.model.User;
 import cn.kwebi.community.service.QuestionService;

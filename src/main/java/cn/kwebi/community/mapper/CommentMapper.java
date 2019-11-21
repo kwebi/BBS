@@ -14,7 +14,7 @@ import java.util.List;
 public interface CommentMapper {
 
     @Select("select * from comment where parent_id=#{parentId} and type=#{type}")
-    List<Comment> getByQuestionId(@Param(value = "parentId") Integer parentId, @Param(value = "type") Integer type);
+    List<Comment> getByParentId(@Param(value = "parentId") Integer parentId, @Param(value = "type") Integer type);
 
     @Insert("insert into comment (parent_id,type,commentator,gmt_create,gmt_modified,like_count,content) values (#{parentId},#{type},#{commentator},#{gmtCreate},#{gmtModified},#{likeCount},#{content})")
     void insert(Comment comment);

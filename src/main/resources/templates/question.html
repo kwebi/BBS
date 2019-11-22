@@ -49,7 +49,7 @@
                                 <img th:src="${comment.user.avatarUrl}" alt="" class="img-rounded media-object">
                             </a>
                         </div>
-                        <div class="media-body">
+                        <div class="media-body" th:id="${'comment-body-'+comment.id}">
                             <h5 class="media-heading">
                                 <span th:text="${comment.user.name}"></span>
                             </h5>
@@ -62,25 +62,25 @@
                             </div>
                             <!--二级评论-->
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 collapse sub-comments" th:id="${'comment-'+comment.id}">
-                                <div class="media col-lg-12 col-md-12 col-sm-12 col-xs-12 comments" th:each="comment: ${comments}">
-                                    <div class="media">
-                                        <div class="media-left">
-                                            <a href="#">
-                                                <img th:src="${comment.user.avatarUrl}" alt="" class="img-rounded media-object">
-                                            </a>
-                                        </div>
-                                        <div class="media-body">
-                                            <h5 class="media-heading">
-                                                <span th:text="${comment.user.name}"></span>
-                                            </h5>
-                                            <div th:text="${comment.content}"></div>
-                                            <div class="menu">
-                                                <span class="glyphicon glyphicon-thumbs-up icon"></span>
-                                                <span class="pull-right" th:text="${#dates.format(comment.gmtCreate,'yyyy-MM-dd HH:mm')}"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+<!--                                <div class="media col-lg-12 col-md-12 col-sm-12 col-xs-12 comments" th:each="comment: ${comments}">-->
+<!--                                    <div class="media">-->
+<!--                                        <div class="media-left">-->
+<!--                                            <a href="#">-->
+<!--                                                <img th:src="${comment.user.avatarUrl}" alt="" class="img-rounded media-object">-->
+<!--                                            </a>-->
+<!--                                        </div>-->
+<!--                                        <div class="media-body">-->
+<!--                                            <h5 class="media-heading">-->
+<!--                                                <span th:text="${comment.user.name}"></span>-->
+<!--                                            </h5>-->
+<!--                                            <div th:text="${comment.content}"></div>-->
+<!--                                            <div class="menu">-->
+<!--                                                <span class="glyphicon glyphicon-thumbs-up icon"></span>-->
+<!--                                                <span class="pull-right" th:text="${#dates.format(comment.gmtCreate,'yyyy-MM-dd HH:mm')}"></span>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <input type="text" class="form-control" placeholder="评论一下..." th:id="${'input-'+comment.id}">
                                     <button type="button" class="btn btn-success pull-right" onclick="comment(this)" th:data-id="${comment.id}">回复</button>
@@ -103,7 +103,6 @@
                         <span th:text="${user.name}"></span>
                     </h5>
                 </div>
-
                 <input type="hidden" th:value="${question.id}" id="question_id">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <textarea class="form-control comment" rows="6" id="comment_content"></textarea>

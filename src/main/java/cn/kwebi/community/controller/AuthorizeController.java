@@ -60,7 +60,6 @@ public class AuthorizeController {
             userService.createOrUpdate(user);
             //写cookie
             response.addCookie(new Cookie("token",token));
-
             return "redirect:/";
         }else{
             //登录失败

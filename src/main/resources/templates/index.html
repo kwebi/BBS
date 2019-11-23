@@ -29,11 +29,6 @@
             </h2>
             <hr>
             <div class="media" th:each="question:${pagination.questions}">
-                <div class="media-left">
-                    <a href="#">
-                        <img th:src="${question.user.avatarUrl}" alt="" class="img-rounded media-object">
-                    </a>
-                </div>
                 <div class="media-body">
                     <h4 class="media-heading">
                         <a th:text="${question.title}" th:href="@{'/question/'+${question.id}}"></a>

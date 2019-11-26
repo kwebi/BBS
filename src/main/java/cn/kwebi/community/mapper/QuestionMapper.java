@@ -9,9 +9,9 @@ import java.util.List;
 public interface QuestionMapper {
     @Insert("insert into question (title,description,gmt_create,gmt_modified,creator,tag)" +
             " values (#{title},#{description},#{gmtCreate},#{gmtModified},#{creator},#{tag})")
-    public void create(Question question);
+    void create(Question question);
 
-    @Select("select * from question limit #{size} offset #{offset}")
+    @Select("select * from question limit #{offset}, #{size}")
     List<Question> list(@Param(value = "offset") Integer offset,@Param(value = "size") Integer size);
 
     @Select("select count(1) from question")
@@ -23,6 +23,7 @@ public interface QuestionMapper {
     @Select("select count(1) from question where creator=#{creator}")
     Integer countByUserId(@Param(value = "creator") Integer creator);
 
+    //@Select("call selectQuestionById(#{id})")
     @Select("select * from question where id=#{id}")
     Question getById(@Param(value = "id") Integer id);
 

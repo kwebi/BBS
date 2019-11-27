@@ -102,6 +102,7 @@ function collapseComments(e) {
                         "class":"media-body"
                     }).append($("<h5/>",{
                         "class":"media-heading",
+                        "id":"secComment-"+comment.id,
                         html:comment.user.name
                     })).append($("<div/>",{
                         html:comment.content
@@ -109,7 +110,7 @@ function collapseComments(e) {
                         "class":"menu",
                     }).append($("<div/>",{
                         "class":"pull-right",
-                        html:new Date(comment.gmtCreate).Format("yyyy-MM-dd hh:mm")
+                        html:new Date(comment.gmtCreate).Format("yyyy-MM-dd hh:mm")+" <a style='cursor: pointer;' onclick='commentToCommentator("+id+","+comment.id+")'>回复</a>"
                     })));
 
                     var mediaElement = $("<div/>",{
@@ -128,5 +129,13 @@ function collapseComments(e) {
             });
         }
     }
+}
+
+//二级回复
+function commentToCommentator(id,commentId) {
+    console.log(id);
+    var inputBtn = $("#input-"+id);
+    var name = $("#secComment-"+commentId).html();
+    inputBtn.attr("value","回复 "+name+" :")
 }
 

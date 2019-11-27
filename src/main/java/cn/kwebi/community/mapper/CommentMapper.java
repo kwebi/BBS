@@ -1,12 +1,7 @@
 package cn.kwebi.community.mapper;
 
-import cn.kwebi.community.dto.CommentDTO;
-import cn.kwebi.community.enums.CommentTypeEnum;
 import cn.kwebi.community.model.Comment;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -21,4 +16,7 @@ public interface CommentMapper {
 
     @Select("select * from comment where id=#{id}")
     Comment getById(@Param(value = "id") Integer id);
+
+    @Update("update comment set comment_count = comment_count+1 where id=#{id}")
+    void incCommentCount(@Param(value = "id") Integer id);
 }

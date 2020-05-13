@@ -15,35 +15,41 @@ public class GithubProvider {
         MediaType mediaType
                 = MediaType.get("application/json; charset=utf-8");
 
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = new OkHttpClient().newBuilder().sslSocketFactory(SSLSocketClient.getSSLSocketFactory())//配置
+                .hostnameVerifier(SSLSocketClient.getHostnameVerifier()).build();
 
         RequestBody body = RequestBody.create(mediaType, JSON.toJSONString(accessTockenDTO));
         Request request = new Request.Builder()
                 .url("https://github.com/login/oauth/access_token")
                 .post(body)
                 .build();
-        try (Response response = client.newCall(request).execute()) {
+        try {
+            Response response = client.newCall(request).execute();
             String string = response.body().string();
             String[] split = string.split("&");
             String tokenstr = split[0];
             String token = tokenstr.split("=")[1];
             return token;
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return null;
     }
     public GithubUser getUser(String accessTocken){
 
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url("https://api.github.com/user?access_token="+accessTocken)
-                .build();
+        OkHttpClient client = new OkHttpClient().newBuilder().sslSocketFactory(SSLSocketClient.getSSLSocketFactory())//配置
+                .hostnameVerifier(SSLSocketClient.getHostnameVerifier()).build();
+        Request request = new Request.Builder()//配置
+                .url("https://api.github.com/user").addHeader("Authorization","token "+accessTocken).build();
+
         try {
             Response response = client.newCall(request).execute();
             String string = response.body().string();
             GithubUser githubUser = JSON.parseObject(string, GithubUser.class);
+            System.out.println(githubUser);
             return githubUser;
         } catch (IOException e) {
+            e.printStackTrace();
         }
         return null;
     }

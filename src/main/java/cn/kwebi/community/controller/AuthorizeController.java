@@ -32,44 +32,48 @@ public class AuthorizeController {
     @Autowired
     private UserService userService;
 
+
     @GetMapping("/callback")
-    public String callback(@RequestParam(name="code") String code,
-                           @RequestParam(name="state") String state,
-                           HttpServletResponse response){
+    public String callback(@RequestParam(name = "code") String code,
+                           @RequestParam(name = "state") String state,
+                           HttpServletResponse response) {
+        String accessTocken;
         AccessTockenDTO accessTockenDTO = new AccessTockenDTO();
         accessTockenDTO.setCode(code);
         accessTockenDTO.setRedirect_uri(redirectUri);
         accessTockenDTO.setState(state);
         accessTockenDTO.setClient_id(clientId);
         accessTockenDTO.setClient_secret(clientSecret);
-        String accessTocken = githubProvider.getAccessTocken(accessTockenDTO);
-        System.out.println(accessTocken);
+        accessTocken = githubProvider.getAccessTocken(accessTockenDTO);
+
+        //System.out.println(accessTocken);
         GithubUser githubUser = githubProvider.getUser(accessTocken);
-        if(githubUser!=null && githubUser.getId()!=null){
+        if (githubUser != null && githubUser.getId() != null) {
             User user = new User();
             String token = UUID.randomUUID().toString();
             user.setToken(token);
             user.setAccountId(String.valueOf(githubUser.getId()));
-            if(githubUser.getName()==null){
+            if (githubUser.getName() == null) {
                 user.setName(githubUser.getLogin());
-            }else {
+            } else {
                 user.setName(githubUser.getName());
             }
             user.setAvatarUrl(githubUser.getAvatarUrl());
 
             userService.createOrUpdate(user);
             //写cookie
-            response.addCookie(new Cookie("token",token));
+            response.addCookie(new Cookie("token", token));
             return "redirect:/";
-        }else{
+        } else {
             //登录失败
             return "redirect:/";
         }
     }
+
     @GetMapping("/logout")
-    public String logout(HttpServletRequest request,HttpServletResponse response){
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
         request.getSession().removeAttribute("user");
-        Cookie cookie = new Cookie("token",null);
+        Cookie cookie = new Cookie("token", null);
         cookie.setMaxAge(0);
         response.addCookie(cookie);
         return "redirect:/";
